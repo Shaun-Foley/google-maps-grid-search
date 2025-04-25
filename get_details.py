@@ -31,21 +31,18 @@ FIELDS_TO_REQUEST = [
     "plus_code/compound_code", "plus_code/global_code", # Request plus_code to get codes
     # Note: utc_offset_minutes appears to be unsupported by the current API despite documentation
     # Contact Data
-    "international_phone_number", "website", "opening_hours", # Requesting opening_hours gives periods, weekday_text, possibly open_now
-    "current_opening_hours", # More detailed current hours info
+    #"international_phone_number", "website", "opening_hours", # Requesting opening_hours gives periods, weekday_text, possibly open_now
+    #"current_opening_hours", # More detailed current hours info
     # Atmosphere Data
-    "rating", "user_ratings_total", "price_level", "reviews" 
+    #"rating", "user_ratings_total", "price_level", "reviews" 
 ]
 # Generate the 'fields' parameter string
 FIELDS_PARAM = ",".join(field.split('/')[0] for field in FIELDS_TO_REQUEST) # Only need top-level field name for API
 
 # Define the headers for the output CSV file (flattened structure)
 CSV_HEADERS = [
-    "place_id", "name", "formatted_address", "lat", "lng", "business_status",
-    "rating", "user_ratings_total", "price_level", "international_phone_number",
-    "website", "url", "vicinity", "plus_code_compound", "plus_code_global",
-    "types", "address_components_json",
-    "opening_hours_json", "current_opening_hours_json", "reviews_json"
+    "place_id", "name", "formatted_address", "lat", "lng", "business_status", "international_phone_number",
+    "types", "url", "vicinity", "plus_code_compound", "plus_code_global"
 ]
 
 # Delay between API calls to be courteous and avoid hitting rapid rate limits
@@ -91,11 +88,11 @@ def flatten_place_data(place_data, headers):
     flat_data["name"] = place_data.get("name", "")
     flat_data["formatted_address"] = place_data.get("formatted_address", "")
     flat_data["business_status"] = place_data.get("business_status", "")
-    flat_data["rating"] = place_data.get("rating", "")
-    flat_data["user_ratings_total"] = place_data.get("user_ratings_total", "")
-    flat_data["price_level"] = place_data.get("price_level", "")
-    flat_data["international_phone_number"] = place_data.get("international_phone_number", "")
-    flat_data["website"] = place_data.get("website", "")
+    #flat_data["rating"] = place_data.get("rating", "")
+    #flat_data["user_ratings_total"] = place_data.get("user_ratings_total", "")
+    #flat_data["price_level"] = place_data.get("price_level", "")
+    #flat_data["international_phone_number"] = place_data.get("international_phone_number", "")
+    #flat_data["website"] = place_data.get("website", "")
     flat_data["url"] = place_data.get("url", "")
     flat_data["vicinity"] = place_data.get("vicinity", "")
     # Note: utc_offset_minutes appears to be unsupported by the current API despite documentation
@@ -109,9 +106,9 @@ def flatten_place_data(place_data, headers):
     # Array/Object fields (serialize to JSON string or join)
     flat_data["types"] = "|".join(place_data.get("types", []))
     flat_data["address_components_json"] = json.dumps(place_data.get("address_components", []), ensure_ascii=False)
-    flat_data["opening_hours_json"] = json.dumps(place_data.get("opening_hours", {}), ensure_ascii=False)
-    flat_data["current_opening_hours_json"] = json.dumps(place_data.get("current_opening_hours", {}), ensure_ascii=False)
-    flat_data["reviews_json"] = json.dumps(place_data.get("reviews", []), ensure_ascii=False)
+    #flat_data["opening_hours_json"] = json.dumps(place_data.get("opening_hours", {}), ensure_ascii=False)
+    #flat_data["current_opening_hours_json"] = json.dumps(place_data.get("current_opening_hours", {}), ensure_ascii=False)
+    #flat_data["reviews_json"] = json.dumps(place_data.get("reviews", []), ensure_ascii=False)
     
     # Ensure all headers exist in the output dict, even if data was missing
     for header in headers:

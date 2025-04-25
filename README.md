@@ -42,8 +42,8 @@ A Python-based tool for extracting place data from Google Maps using the Google 
 
 1. Clone this repository:
    ```
-   git clone https://github.com/username/google-maps-place-search.git
-   cd google-maps-place-search
+   git clone https://github.com/username/google-maps-grid-search
+   cd google-maps-grid-search
    ```
 
 2. Create and activate a virtual environment:
@@ -106,8 +106,8 @@ To modify the script for searching different place types or locations, edit thes
 
 ```python
 # Change these values to customize your search
-TARGET_LOCATION = "Berlin, Germany"  # Any location Google Maps recognizes
-PLACE_TYPE = "physiotherapist"  # Any place type from Google Places API
+TARGET_LOCATION = "Vienna, Austria"  # Any location Google Maps recognizes
+PLACE_TYPE = "dentist"  # Any place type from Google Places API
 ```
 
 ### Supported Place Types

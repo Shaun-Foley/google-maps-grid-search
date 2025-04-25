@@ -12,16 +12,19 @@ from collections import deque
 # --- Command Line Arguments ---
 parser = argparse.ArgumentParser(description="Extract place data from Google Maps API using grid-based search")
 parser.add_argument("--dry-run", action="store_true", help="Run in dry run mode with mock responses")
-parser.add_argument("--test-area", choices=["alexanderplatz", "tiergarten", "kreuzberg", "friedrichstrasse", "all"], 
-                    help="Run on specific test area instead of full Berlin")
+parser.add_argument(
+    "--test-area",
+    choices=["vienna", "berlin", "zurich", "all"],
+    help="Test area to search"
+)
 parser.add_argument("--max-calls", type=int, default=0, 
                     help="Maximum API calls to make before stopping (0 = unlimited)")
 parser.add_argument("--visualize", action="store_true", help="Generate visualization maps of the search")
 parser.add_argument("--param-test", action="store_true", help="Run parameter sensitivity testing")
 parser.add_argument("--combine-maps", nargs='+', help="Combine multiple saved map data files into one visualization")
-parser.add_argument("--place-type", type=str, default="physiotherapist", 
+parser.add_argument("--place-type", type=str, default="dentists", 
                     help="The type of place to search for (e.g., restaurant, cafe, gym)")
-parser.add_argument("--location", type=str, default="Berlin, Germany",
+parser.add_argument("--location", type=str, default="Vienna, Austria",
                     help="The location to search in (e.g., 'New York, NY', 'London, UK')")
 args = parser.parse_args()
 
@@ -56,21 +59,17 @@ MINI_GRID_OVERLAP_FACTOR = 1.0  # mini_step = mini_radius * MINI_GRID_OVERLAP_FA
 
 # Define test areas for small-scale testing
 TEST_AREAS = {
-    "alexanderplatz": {
-        "name": "Alexanderplatz (Dense)",
-        "bounds": (52.5150, 13.4050, 52.5250, 13.4150)
+    "vienna": {
+        "name": "Vienna, AT",
+        "bounds": (48.111389, 16.189722, 48.320833, 16.594167)
     },
-    "tiergarten": {
-        "name": "Tiergarten (Sparse)",
-        "bounds": (52.5100, 13.3500, 52.5200, 13.3600)
+    "berlin": {
+        "name": "Berlin, DE",
+        "bounds": (52.324788, 13.073535, 52.692507, 13.786148)
     },
-    "kreuzberg": {
-        "name": "Kreuzberg (Mixed)",
-        "bounds": (52.4900, 13.3900, 52.5000, 13.4000)
-    },
-    "friedrichstrasse": {
-        "name": "Friedrichstraße Area",
-        "bounds": (52.5000, 13.3850, 52.5300, 13.3950)
+    "zurich": {
+        "name": "Zurich, CH",
+        "bounds": (47.320228, 8.448081, 47.434833, 8.625889)
     }
 }
 
@@ -334,7 +333,7 @@ def generate_mock_response(lat, lng, radius, place_type, next_page_token=None):
     for i in range(num_results):
         # Create a deterministic but varied place ID
         place_id = f"mock_place_{area_density}_{base_hash % 10000}_{i}"
-        name = f"Physio {area_density.title()} {base_hash % 1000}-{i}"
+        name = f"dentist {area_density.title()} {base_hash % 1000}-{i}"
         
         # Generate location near the search point, with more variance in low-density areas
         location_variance = 0.005 if area_density == "sparse" else 0.002
@@ -351,13 +350,13 @@ def generate_mock_response(lat, lng, radius, place_type, next_page_token=None):
                     "lng": place_lng
                 }
             },
-            "vicinity": f"{area_density.title()} Street, Berlin",
-            "types": ["physiotherapist", "health", "point_of_interest", "establishment"],
+            "vicinity": f"{area_density.title()} Street, Vienna",
+            "types": ["dentist", "health", "point_of_interest", "establishment"],
             "business_status": random.choice(["OPERATIONAL", "CLOSED_TEMPORARILY", "CLOSED_PERMANENTLY"]),
             "rating": round(3 + random.random() * 2, 1),  # Random rating between 3.0 and 5.0
             "user_ratings_total": random.randint(1, 150),
             "plus_code": {
-                "compound_code": f"XXX+XX Berlin, Germany",
+                "compound_code": f"XXX+XX Vienna, Austria",
                 "global_code": f"9F4MXXX+XX"
             }
         }
@@ -488,7 +487,7 @@ def create_summary_csv(output_dir="detailed_place_data", target_location="", mod
     # Generate an appropriate filename
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     location_slug = target_location.split(',')[0].lower().replace(' ', '_') if target_location else "all"
-    csv_filename = f"physiotherapist_summary_{location_slug}_{mode}_{timestamp}.csv"
+    csv_filename = f"dentist_summary_{location_slug}_{mode}_{timestamp}.csv"
     
     # Define CSV headers
     headers = [
@@ -763,7 +762,7 @@ def visualize_search_results(grid_points, refinement_points, place_ids_with_coor
     # Create layer groups for primary dataset
     grid_layer = folium.FeatureGroup(name="Standard Grid Points")
     refinement_layer = folium.FeatureGroup(name="Refinement Points")
-    places_layer = folium.FeatureGroup(name="Physiotherapists")
+    places_layer = folium.FeatureGroup(name="Dentists")
     heatmap_layer = folium.FeatureGroup(name="Density Heatmap")
     
     # Plot standard grid points
@@ -807,7 +806,7 @@ def visualize_search_results(grid_points, refinement_points, place_ids_with_coor
             # Create layer groups for this dataset with distinct names
             add_grid_layer = folium.FeatureGroup(name=f"Grid Points (Dataset {dataset_idx+1})")
             add_refine_layer = folium.FeatureGroup(name=f"Refinement Points (Dataset {dataset_idx+1})")
-            add_places_layer = folium.FeatureGroup(name=f"Physiotherapists (Dataset {dataset_idx+1})")
+            add_places_layer = folium.FeatureGroup(name=f"Dentists (Dataset {dataset_idx+1})")
             
             # Add grid points
             for lat, lng in add_grid:
@@ -1063,7 +1062,7 @@ def main():
             return
             
         print(f"Combining {len(args.combine_maps)} maps...")
-        output_file = f"combined_map_physiotherapist_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        output_file = f"combined_map_dentist_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
         map_data_file = f"combined_map_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         
         # Load the first dataset as the primary
