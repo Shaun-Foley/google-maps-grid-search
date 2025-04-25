@@ -1,5 +1,8 @@
 # Google Maps Place Search Tool
 
+Modified: For focus on Dentists in Berlin, Vienna, and Zurich
+
+
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Google Maps API](https://img.shields.io/badge/Google%20Maps%20API-Places-success) ![Geospatial](https://img.shields.io/badge/Geospatial-Grid%20Search-orange) ![Data Collection](https://img.shields.io/badge/Data-Collection-lightgrey) ![License](https://img.shields.io/badge/License-MIT-green)
 
 A Python-based tool for extracting place data from Google Maps using the Google Places API. The tool employs an adaptive grid-based approach to efficiently find and extract data about any type of establishment in a geographic area.
@@ -25,9 +28,8 @@ A Python-based tool for extracting place data from Google Maps using the Google 
 
 ## Key Components
 
-- **physio-search**: Main search tool using the Google Places API (can be renamed to reflect its generic nature)
+- **grid_search**: Main search tool using the Google Places API (can be renamed to reflect its generic nature)
 - **get_details.py**: Utility to fetch detailed information for collected place IDs
-- **combine_maps.py**: Tool to combine visualization data from multiple searches
 
 ## Requirements
 
@@ -40,10 +42,13 @@ A Python-based tool for extracting place data from Google Maps using the Google 
 
 ## Installation
 
-1. Clone this repository:
+1. Clone this repository (enter original owners username):
    ```
    git clone https://github.com/username/google-maps-grid-search
+   e.g. here's the original depo https://github.com/adriansprk/google-maps-grid-search
+   
    cd google-maps-grid-search
+
    ```
 
 2. Create and activate a virtual environment:
@@ -69,22 +74,22 @@ A Python-based tool for extracting place data from Google Maps using the Google 
 Run the main search script to find place IDs:
 
 ```
-python physio-search
+python grid-search.py
 ```
 
-By default, this will search for physiotherapists in Berlin, Germany, but you can modify the settings as explained below.
+For dentists I ran this script in the virtual environment: python grid-search.py --test-area vienna --place-type dentist --visualize
 
 ### Command Line Options
 
 The search script supports several command-line options:
 
 ```
-python physio-search [options]
+python grid-search.py [options]
 ```
 
 Options:
 - `--dry-run`: Run in mock mode without making actual API calls
-- `--test-area {alexanderplatz,tiergarten,kreuzberg,friedrichstrasse,all}`: Run on a specific test area
+- `--test-area {vienna, berlin, zurich}`: Run on a specific test area
 - `--max-calls N`: Maximum API calls to make before stopping (0 = unlimited)
 - `--visualize`: Generate visualization maps of the search
 - `--param-test`: Run parameter sensitivity testing

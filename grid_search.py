@@ -22,9 +22,9 @@ parser.add_argument("--max-calls", type=int, default=0,
 parser.add_argument("--visualize", action="store_true", help="Generate visualization maps of the search")
 parser.add_argument("--param-test", action="store_true", help="Run parameter sensitivity testing")
 parser.add_argument("--combine-maps", nargs='+', help="Combine multiple saved map data files into one visualization")
-parser.add_argument("--place-type", type=str, default="dentists", 
+parser.add_argument("--place-type", type=str, default="dentist", 
                     help="The type of place to search for (e.g., restaurant, cafe, gym)")
-parser.add_argument("--location", type=str, default="Vienna, Austria",
+parser.add_argument("--location", type=str, default="Vienna, AT",
                     help="The location to search in (e.g., 'New York, NY', 'London, UK')")
 args = parser.parse_args()
 
